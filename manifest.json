@@ -1,0 +1,14 @@
+{
+  "name": "Navoiy viloyati — Yuridik xizmat markazlari",
+  "short_name": "Navoiy Adliya",
+  "description": "Yuridik xizmat koʻrsatish markazlari maʼlumotnomasi",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#142a52",
+  "theme_color": "#1f3b73",
+  "lang": "uz",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
