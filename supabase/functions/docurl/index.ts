@@ -20,6 +20,12 @@ const cors = {
 const json = (b: unknown, status = 200) =>
   new Response(JSON.stringify(b), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
+// XAVFSIZLIK: kalit faqat xavfsiz belgilardan iborat boʻlsin — traversal/normalizatsiya hujumiga qarshi
+// (staff-edit dagi bilan bir xil qoida). Bucketdagi ixtiyoriy obyektni imzolab berishning oldini oladi.
+const KEY_OK = (k: string) =>
+  typeof k === "string" && k.length > 0 && k.length <= 200 &&
+  !k.includes("..") && /^[A-Za-z0-9][A-Za-z0-9/_.\-]*$/.test(k);
+
 async function sign(key: string, disposition: string) {
   const base = `https://${ACCOUNT}.r2.cloudflarestorage.com/${BUCKET}/${key}`;
   const u = `${base}?X-Amz-Expires=3600&response-content-disposition=${encodeURIComponent(disposition)}`;
@@ -43,6 +49,7 @@ Deno.serve(async (req) => {
     const urls: Record<string, { view: string; dl: string }> = {};
     for (const it of list.slice(0, 30)) {
       const key = String(it.p).replace(/^\/+/, "");
+      if (!KEY_OK(key)) continue; // notoʻgʻri kalit — imzolamaymiz
       const fn = (it.fn || key.split("/").pop() || "hujjat.pdf").replace(/["\\]/g, "");
       urls[it.p] = {
         view: await sign(key, "inline"),

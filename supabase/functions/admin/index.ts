@@ -113,6 +113,6 @@ Deno.serve(async (req) => {
 
     return json({ error: "Nomaʼlum amal" }, 400);
   } catch (e) {
-    return json({ error: "Server xatosi: " + e.message }, 500);
+    return json({ error: "Server xatosi: " + String(e) }, 500);
   }
 });

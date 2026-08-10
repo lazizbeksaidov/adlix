@@ -1,8 +1,14 @@
 # ADLIX — AI-Powered Legal Services Platform
 
+[![CI](https://github.com/lazizbeksaidov/adlix/actions/workflows/ci.yml/badge.svg)](https://github.com/lazizbeksaidov/adlix/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Live](https://img.shields.io/badge/live-adlix.uz-1f3b73)](https://adlix.uz)
+
 **A digital reference, management, and oversight system for regional legal‑service centers, with a built‑in AI legal assistant.**
 
 🌐 **Live:** [adlix.uz](https://adlix.uz) · Region: Navoiy, Uzbekistan · Status: **in production use**
+
+> **Access note.** The live system is behind authentication because it holds the contact details of 722 organizations and their responsible officers. This is a deliberate privacy decision, not a missing feature. Reviewer access can be provided on request.
 
 > Submitted to the **President AI Award** (National AI Startup Competition & Acceleration Program) — category: *AI in Government / Public Administration*.
 
@@ -81,6 +87,12 @@ The system has been through **multiple adversarial security & reliability audits
 
 ---
 
+## About this repository (clean‑room public mirror)
+
+This is a **public mirror**, published as a single commit. The project has been developed and deployed continuously since June 2026 (the running application is at build **v67**), but the original repository cannot be opened as‑is: its history contains the personal data of 722 organizations and photographs of 37 civil servants.
+
+Rather than rewriting that history, this mirror was exported from the working tree **without** any personal data, media of individuals, or credentials — so the code can be reviewed while the data stays protected. Version numbers you will see in the code (`?v=67`, `navoiy-v67` in `sw.js`) refer to the deployment build of the live system.
+
 ## Repository layout
 
 ```
@@ -127,6 +139,16 @@ supabase functions deploy chat --project-ref <your-ref> --no-verify-jwt
 **Saidov Lazizbek Erkin oʻgʻli** — Chief Legal Counsel, Department of Investments, Industry and Trade (Navoiy region). Project lead & developer.
 📞 +998 91 333 33 63
 
+## Naming
+
+**ADLIX** is the product/brand name of the platform. Inside the application the institutional title is used instead — *"Navoiy viloyati yuridik xizmat koʻrsatish markazlari"* (Legal Service Centers of Navoiy Region) — because the system is operated by a state body and must present itself under its official name to its users.
+
+## Trademarks and emblems
+
+The MIT license below applies to the **source code only**.
+
+The state emblem of the Ministry of Justice of the Republic of Uzbekistan (`img/logo.png`, `img/icon-192.png`, `img/icon-512.png`), the Telegram bot avatar (`img/bot-logo.png`) and the Lex.uz mark (`img/lex-ai.jpg`) are **not** covered by it. They remain the property of their respective rights holders, are included solely so the interface renders as deployed, and must not be reused.
+
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) — source code only (see *Trademarks and emblems* above).
