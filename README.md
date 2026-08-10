@@ -93,6 +93,16 @@ This is a **public mirror**, published as a single commit. The project has been 
 
 Rather than rewriting that history, this mirror was exported from the working tree **without** any personal data, media of individuals, or credentials — so the code can be reviewed while the data stays protected. Version numbers you will see in the code (`?v=67`, `navoiy-v67` in `sw.js`) refer to the deployment build of the live system.
 
+## Continuous integration
+
+Every push runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
+
+- `deno check` — type-checks all five Edge Functions
+- `deno lint` — lints the backend
+- `node --check` — syntax-checks the frontend scripts, plus JSON validation
+
+One lint rule is switched off in [`deno.json`](deno.json): **`no-explicit-any`**. The directory, documents and templates are stored as a single Postgres `jsonb` document whose shape is defined by the data, not by a schema; the functions read it dynamically. Introducing generated types for it is planned, but is a refactor rather than a quick fix, so the rule is disabled deliberately instead of being silenced case by case.
+
 ## Repository layout
 
 ```

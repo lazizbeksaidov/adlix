@@ -4,6 +4,11 @@
     "lint": "deno lint supabase/functions",
     "fmt": "deno fmt --check supabase/functions"
   },
-  "lint": { "rules": { "tags": ["recommended"] } },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"],
+      "exclude": ["no-explicit-any"]
+    }
+  },
   "fmt": { "lineWidth": 140, "semiColons": true, "singleQuote": false }
 }
