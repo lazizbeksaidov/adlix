@@ -218,7 +218,7 @@ Deno.serve(async (req) => {
         if (e) return json({ error: e.message }, 500);
         if (upd && upd.length) {
           // muvaffaqiyat — audit jurnalini yozamiz (yozuv xatosi saqlashga taʼsir qilmasin)
-          try { if (logRows.length) await admin.from("edit_log").insert(logRows); } catch (_) {}
+          try { if (logRows.length) await admin.from("edit_log").insert(logRows); } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ }
           return json({ ok: true });
         }
         // konflikt: bu orada boshqa yozuv boʻldi — qaytadan urinamiz

@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     // {items:[{p, fn}]} yoki eski {paths:[...]}
-    let list: { p: string; fn?: string }[] = Array.isArray(body.items) ? body.items
+    const list: { p: string; fn?: string }[] = Array.isArray(body.items) ? body.items
       : Array.isArray(body.paths) ? body.paths.map((p: string) => ({ p })) : [];
     if (!list.length) return json({ error: "no paths" }, 400);
 

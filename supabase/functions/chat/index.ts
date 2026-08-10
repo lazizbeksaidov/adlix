@@ -237,7 +237,7 @@ Deno.serve(async (req) => {
 
     const adminDb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
     let login = "", isAdmin = false;
-    try { const { data: p } = await adminDb.from("profiles").select("login,is_admin").eq("user_id", user.id).single(); login = p?.login || ""; isAdmin = !!p?.is_admin; } catch (_) {}
+    try { const { data: p } = await adminDb.from("profiles").select("login,is_admin").eq("user_id", user.id).single(); login = p?.login || ""; isAdmin = !!p?.is_admin; } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ }
 
     // ---------- MAXSUS VAZIFA (5): tugʻilgan kun tabrigi — har foydalanuvchi, limitsiz, qisqa ----------
     if (task === "bday") {
@@ -260,7 +260,7 @@ Deno.serve(async (req) => {
       const sys = `Sen Oʻzbekiston davlat tashkiloti (Adliya — yuridik xizmat koʻrsatish markazi) uchun rasmiy, ammo samimiy tabrik matni yozasan. Hurmatli, iliq ohang. EMOJI ISHLATMA. Faqat tabrik matnini ber, boshqa izoh yozma.`;
       const prompt = `Hamkasbga tugʻilgan kun tabrigi yoz. F.I.O: ${name}${p.role ? `; lavozim: ${p.role}` : ""}${p.district ? `; hudud: ${p.district}` : ""}. 2-3 jumla, ${alpha} alifbosida, kasbiy va samimiy; sogʻlik, omad va kasbiy yutuqlar tilanadi.`;
       const t = await geminiText(sys, prompt, 0.9, 320);
-      if (t) { if (!bLogged) { try { await adminDb.from("ai_logs").insert({ login, question: "[bday tabrik]" }); } catch (_) {} } return json({ answer: t.trim() }); }
+      if (t) { if (!bLogged) { try { await adminDb.from("ai_logs").insert({ login, question: "[bday tabrik]" }); } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ } } return json({ answer: t.trim() }); }
       return json({ error: "AI hozir band. Bir oz keyinroq urinib koʻring." });
     }
 
@@ -302,7 +302,7 @@ Javobni FAQAT JSON massiv koʻrinishida ber, boshqa matnsiz: [{"id":<butun son>,
           const cutoff = new Date(Date.now() - 90 * 864e5).toISOString();
           adminDb.from("ai_logs").delete().lt("created_at", cutoff).then(() => {}, () => {});
         }
-      } catch (_) {}
+      } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ }
     };
 
     // Har foydalanuvchiga kunlik AI savol limiti (admin mustasno) — bepul kvotani himoya qiladi.

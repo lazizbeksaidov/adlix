@@ -246,7 +246,7 @@ function buildAiContext(data: any, question: string) {
 }
 async function geminiTry(body: string, models: string[]) {
   for (const mdl of models) for (let a = 0; a < 2; a++) {
-    try { const r = await fetch(gUrl(mdl), { method: "POST", headers: { "x-goog-api-key": GKEY(), "Content-Type": "application/json" }, body }); const g = await r.json(); const ans = g?.candidates?.[0]?.content?.parts?.[0]?.text; if (ans) return ans; if (g?.error?.code === 429) break; } catch (_) {}
+    try { const r = await fetch(gUrl(mdl), { method: "POST", headers: { "x-goog-api-key": GKEY(), "Content-Type": "application/json" }, body }); const g = await r.json(); const ans = g?.candidates?.[0]?.content?.parts?.[0]?.text; if (ans) return ans; if (g?.error?.code === 429) break; } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ }
     await new Promise((r) => setTimeout(r, 500));
   }
   return "";
@@ -264,7 +264,7 @@ function localFindTg(data: any, question: string): string | null {
   const dist = (data.districts || []).find((d: any) => q.includes(d.id) || q.includes(aiNorm(d.name).split(" ")[0]));
   const sl = (s: any, dn: string) => `${s.fio}${s.lavozim ? " — " + s.lavozim : ""}, ${dn}${(s.tel || []).length ? " ☎ " + s.tel.join(", ") : ""}`;
   const ol = (lbl: string, p: any, org: string, dn: string) => `${org} — ${lbl}: ${p.fio}${(p.tel || []).length ? " ☎ " + p.tel.join(", ") : ""} (${dn})`;
-  let lines: string[] = [];
+  const lines: string[] = [];
   if (dist && /markaz|boshli|yuriskonsul|yurist/.test(q)) {
     for (const s of (dist.markaz || [])) { if (!s.fio || s.fio === "Vakant") continue; const lav = aiNorm(s.lavozim || "");
       if (/boshli|yurist|yuriskonsul/.test(q)) { if (/boshli|yurist|yuriskonsul/.test(lav)) lines.push(sl(s, dist.name)); } else lines.push(sl(s, dist.name)); }
@@ -309,7 +309,7 @@ async function askAI(data: any, question: string): Promise<{ answer: string; sou
   if (!targets.length) targets = findBuyruqDocs(data, question);
   if (targets.length) {
     const parts: any[] = []; const used: string[] = [];
-    for (const t of targets) { try { const b = await fetchDocBytes(t.p); if (b.length <= 14 * 1024 * 1024) parts.push({ inline_data: { mime_type: "application/pdf", data: toB64(b) } }); else { const uri = await uploadToGemini(b, t.p); parts.push({ file_data: { mime_type: "application/pdf", file_uri: uri } }); } used.push(`${t.org} (${t.district}) — ${t.label}`); } catch (_) {} }
+    for (const t of targets) { try { const b = await fetchDocBytes(t.p); if (b.length <= 14 * 1024 * 1024) parts.push({ inline_data: { mime_type: "application/pdf", data: toB64(b) } }); else { const uri = await uploadToGemini(b, t.p); parts.push({ file_data: { mime_type: "application/pdf", file_uri: uri } }); } used.push(`${t.org} (${t.district}) — ${t.label}`); } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ } }
     if (parts.length) {
       parts.push({ text: question });
       const sys = `Sen Navoiy viloyati yuridik xizmat markazlari yordamchisisan. Foydalanuvchi savoliga FAQAT berilgan hujjat(lar) asosida toʻliq, aniq javob ber. Hujjat(lar): ${used.join("; ")}. Asosiy bandlarni izohlab ber. Hujjat skaner boʻlib matn noaniq boʻlsa harfma-harf koʻchirma — mazmunini toza oʻzbek tilida tushuntir, buzuq belgilar chiqarma. Hujjatda maʼlumot boʻlmasa "Bu maʼlumot hujjatda yoʻq" deb ayt.`;
@@ -333,13 +333,13 @@ async function runAI(chat_id: number, question: string, loginKey: string) {
     const sinceIso = new Date(uzStart.getTime() - 5 * 3600e3).toISOString();
     const { count } = await db.from("ai_logs").select("id", { count: "exact", head: true }).eq("login", loginKey).gte("created_at", sinceIso);
     if ((count || 0) >= 20) { await sendPlain(chat_id, "Bugungi AI savollar limiti (20 ta) tugadi. Ertaga yana savol berishingiz mumkin."); return; }
-  } catch (_) {}
+  } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ }
   await tg("sendChatAction", { chat_id, action: "typing" });
   const res = await askAI(await getData(), question);
   let out = cleanAns(res.answer);
   if (res.source?.length) out += `\n\n📄 Manba: ${res.source.join("; ")}`;
   await sendPlain(chat_id, out, { inline_keyboard: [[{ text: "🤖 Yana savol", callback_data: "ai" }], [{ text: "🏠 Bosh menyu", callback_data: "m" }]] });
-  try { await db.from("ai_logs").insert({ login: loginKey, question }); } catch (_) {}
+  try { await db.from("ai_logs").insert({ login: loginKey, question }); } catch (_) { /* ataylab eʼtiborsiz: asosiy amalga taʼsir qilmasin */ }
 }
 
 Deno.serve(async (req) => {
