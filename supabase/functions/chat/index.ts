@@ -187,7 +187,7 @@ async function uploadToGemini(bytes: Uint8Array, displayName: string): Promise<s
   const upRes = await fetch(uploadUrl, {
     method: "POST",
     headers: { "X-Goog-Upload-Command": "upload, finalize", "X-Goog-Upload-Offset": "0", "Content-Length": String(numBytes) },
-    body: bytes,
+    body: new Blob([bytes]), // Blob — Deno 2 da Uint8Array<ArrayBufferLike> BodyInit emas
   });
   let file = (await upRes.json())?.file;
   let tries = 0;
