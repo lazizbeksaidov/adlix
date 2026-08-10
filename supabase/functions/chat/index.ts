@@ -174,7 +174,7 @@ function localFind(data: any, question: string): string | null {
 function toB64(bytes: Uint8Array) { let bin = ""; const ch = 0x8000; for (let i = 0; i < bytes.length; i += ch) bin += String.fromCharCode(...bytes.subarray(i, i + ch)); return btoa(bin); }
 
 // Katta PDF (>~14MB inline limiti) uchun Gemini Files API'ga yuklash
-async function uploadToGemini(bytes: Uint8Array, displayName: string): Promise<string> {
+async function uploadToGemini(bytes: Uint8Array<ArrayBuffer>, displayName: string): Promise<string> {
   const apiKey = KEY();
   const numBytes = bytes.length;
   const startRes = await fetch(`https://generativelanguage.googleapis.com/upload/v1beta/files?key=${apiKey}`, {
@@ -187,7 +187,7 @@ async function uploadToGemini(bytes: Uint8Array, displayName: string): Promise<s
   const upRes = await fetch(uploadUrl, {
     method: "POST",
     headers: { "X-Goog-Upload-Command": "upload, finalize", "X-Goog-Upload-Offset": "0", "Content-Length": String(numBytes) },
-    body: new Blob([bytes]), // Blob — Deno 2 da Uint8Array<ArrayBufferLike> BodyInit emas
+    body: bytes,
   });
   let file = (await upRes.json())?.file;
   let tries = 0;
@@ -201,7 +201,7 @@ async function uploadToGemini(bytes: Uint8Array, displayName: string): Promise<s
   return file.uri as string;
 }
 
-async function fetchDoc(key: string): Promise<Uint8Array> {
+async function fetchDoc(key: string): Promise<Uint8Array<ArrayBuffer>> {
   const url = `https://${R2_ACCOUNT}.r2.cloudflarestorage.com/${R2_BUCKET}/${key.replace(/^\/+/, "")}`;
   const signed = await aws.sign(url, { method: "GET", aws: { signQuery: true } });
   const r = await fetch(signed.url);

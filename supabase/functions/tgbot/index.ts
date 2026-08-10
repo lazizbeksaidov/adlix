@@ -222,11 +222,11 @@ async function fetchDocBytes(key: string) {
   const r = await fetch(signed.url); if (!r.ok) throw new Error("doc " + r.status);
   return new Uint8Array(await r.arrayBuffer());
 }
-async function uploadToGemini(bytes: Uint8Array, displayName: string) {
+async function uploadToGemini(bytes: Uint8Array<ArrayBuffer>, displayName: string) {
   const apiKey = GKEY(); const n = bytes.length;
   const s = await fetch(`https://generativelanguage.googleapis.com/upload/v1beta/files?key=${apiKey}`, { method: "POST", headers: { "X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": String(n), "X-Goog-Upload-Header-Content-Type": "application/pdf", "Content-Type": "application/json" }, body: JSON.stringify({ file: { display_name: displayName } }) });
   const uurl = s.headers.get("X-Goog-Upload-URL"); if (!uurl) throw new Error("upload-url");
-  const up = await fetch(uurl, { method: "POST", headers: { "X-Goog-Upload-Command": "upload, finalize", "X-Goog-Upload-Offset": "0", "Content-Length": String(n) }, body: new Blob([bytes]) }); // Blob — Deno 2 tip mosligi
+  const up = await fetch(uurl, { method: "POST", headers: { "X-Goog-Upload-Command": "upload, finalize", "X-Goog-Upload-Offset": "0", "Content-Length": String(n) }, body: bytes });
   let file = (await up.json())?.file; let t = 0;
   while (file && file.state === "PROCESSING" && t < 12) { await new Promise((r) => setTimeout(r, 1500)); const st = await fetch(`https://generativelanguage.googleapis.com/v1beta/${file.name}?key=${apiKey}`); file = await st.json(); t++; }
   if (!file || file.state !== "ACTIVE") throw new Error("file " + (file?.state || "?"));
