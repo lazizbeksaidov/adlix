@@ -364,7 +364,7 @@ Deno.serve(async (req) => {
       else if (a === "o") { const v = orgView(data, did, +p2, +p3 || 0); await edit(cid, mid, v.text, v.kb); }
       else if (a === "f") { await sendDoc(data, did, +p2, +p3, cid); }
       else if (a === "ai") { await tg("sendMessage", { chat_id: cid, text: AI_PROMPT, reply_markup: { force_reply: true, input_field_placeholder: "Savolingiz..." } }); }
-    } catch (_e) {}
+    } catch (_e) { /* ataylab eʼtiborsiz */ }
     return new Response("ok");
   }
 

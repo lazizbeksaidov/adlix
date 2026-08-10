@@ -115,7 +115,7 @@ function localFind(data: any, question: string): string | null {
   const dist = (data.districts || []).find((d: any) => q.includes(d.id) || q.includes(norm(d.name).split(" ")[0]));
   const staffLine = (s: any, dn: string) => `${s.fio}${s.lavozim ? " — " + s.lavozim : ""}, ${dn}${(s.tel || []).length ? " ☎ " + s.tel.join(", ") : ""}`;
   const orgLine = (lbl: string, p: any, org: string, dn: string) => `${org} — ${lbl}: ${p.fio}${(p.tel || []).length ? " ☎ " + p.tel.join(", ") : ""} (${dn})`;
-  let lines: string[] = [];
+  const lines: string[] = [];
 
   // 1) markaz xodimlari (boshliq / yuriskonsult) — tuman + "markaz/boshliq/yurist"
   if (dist && /markaz|boshli|yuriskonsul|yurist/.test(q)) {
