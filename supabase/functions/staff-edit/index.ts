@@ -156,7 +156,9 @@ Deno.serve(async (req) => {
         const signed = await aws.sign(r2url, { method: "PUT", headers: { "Content-Length": String(size) }, aws: { signQuery: true, allHeaders: true } });
         return json({ url: signed.url, key });
       }
-      const buf = new Uint8Array(await req.arrayBuffer());
+      // Xom ArrayBuffer — tarmoq/saqlash uchun (BodyInit bilan mos); Uint8Array — bayt tekshiruvi uchun
+      const ab = await req.arrayBuffer();
+      const buf = new Uint8Array(ab);
       if (!buf.length) return json({ error: "bo'sh fayl" }, 400);
       if (buf.length > MAXFILE) return json({ error: "Fayl 30MB dan katta" }, 413);
       if (up === "doc" || up === "tpl") {
@@ -165,7 +167,7 @@ Deno.serve(async (req) => {
         if (up === "doc" && ext !== "pdf") return json({ error: "faqat .pdf" }, 400);
         if (up === "tpl" && !CT[ext]) return json({ error: "Ruxsat etilmagan fayl turi (pdf/doc/docx/xls/xlsx/ppt/pptx)" }, 400);
         const r2url = `https://${R2_ACCOUNT}.r2.cloudflarestorage.com/${R2_BUCKET}/${key}`;
-        const put = await aws.fetch(r2url, { method: "PUT", body: buf, headers: { "Content-Type": CT[ext] || "application/octet-stream" } });
+        const put = await aws.fetch(r2url, { method: "PUT", body: ab, headers: { "Content-Type": CT[ext] || "application/octet-stream" } });
         if (!put.ok) return json({ error: "R2 PUT xato: " + put.status }, 500);
         return json({ ok: true, key });
       } else {
@@ -179,7 +181,7 @@ Deno.serve(async (req) => {
           (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47) || // PNG
           (buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 && buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50); // RIFF…WEBP
         if (!okMagic) return json({ error: "Rasm fayli buzuq yoki notoʻgʻri format" }, 400);
-        const { error: e } = await admin.storage.from("staff").upload(key, buf, { contentType: IMG_CT[ext], upsert: true });
+        const { error: e } = await admin.storage.from("staff").upload(key, ab, { contentType: IMG_CT[ext], upsert: true });
         if (e) return json({ error: e.message }, 500);
         const { data: pub } = admin.storage.from("staff").getPublicUrl(key);
         return json({ ok: true, url: pub.publicUrl });
